@@ -15,7 +15,7 @@ interface ConsumptionChartProps {
 export function ConsumptionChart({ data }: ConsumptionChartProps) {
   const [view, setView] = useState<"7day" | "30day">("7day");
 
-  const displayData = data.slice(0, view === "7day" ? 7 : 30);
+  const displayData = view === "7day" ? data.slice(-7) : data;
 
   return (
     <Card>

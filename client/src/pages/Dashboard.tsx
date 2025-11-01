@@ -105,12 +105,12 @@ export default function Dashboard() {
 
   const currentStreak = calculateStreak();
 
-  // Generate chart data for last 7 days
+  // Generate chart data for last 30 days
   const generateChartData = () => {
     const days = [];
     const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 29; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       date.setHours(0, 0, 0, 0);
@@ -125,8 +125,11 @@ export default function Dashboard() {
       
       const totalOz = dayDrinks.reduce((sum, d) => sum + d.sizeOz, 0);
       
+      // For 7-day view, use day labels. For 30-day, use M/D format
+      const label = i < 7 ? dayLabels[date.getDay()] : `${date.getMonth() + 1}/${date.getDate()}`;
+      
       days.push({
-        date: dayLabels[date.getDay()],
+        date: label,
         oz: totalOz,
       });
     }

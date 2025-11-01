@@ -12,6 +12,8 @@ export const drinks = pgTable("drinks", {
 
 export const insertDrinkSchema = createInsertSchema(drinks).omit({
   id: true,
+}).extend({
+  timestamp: z.coerce.date().optional(),
 });
 
 export type InsertDrink = z.infer<typeof insertDrinkSchema>;
