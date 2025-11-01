@@ -1,37 +1,44 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { type Drink, type InsertDrink } from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getDrinks(): Promise<Drink[]>;
+  getDrink(id: string): Promise<Drink | undefined>;
+  createDrink(drink: InsertDrink): Promise<Drink>;
+  deleteDrink(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private drinks: Map<string, Drink>;
 
   constructor() {
-    this.users = new Map();
+    this.drinks = new Map();
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
+  async getDrinks(): Promise<Drink[]> {
+    return Array.from(this.drinks.values()).sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async getDrink(id: string): Promise<Drink | undefined> {
+    return this.drinks.get(id);
+  }
+
+  async createDrink(insertDrink: InsertDrink): Promise<Drink> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const drink: Drink = { 
+      id,
+      sizeOz: insertDrink.sizeOz,
+      timestamp: insertDrink.timestamp || new Date(),
+      note: insertDrink.note ?? null
+    };
+    this.drinks.set(id, drink);
+    return drink;
+  }
+
+  async deleteDrink(id: string): Promise<boolean> {
+    return this.drinks.delete(id);
   }
 }
 
